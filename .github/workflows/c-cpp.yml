@@ -21,7 +21,6 @@ jobs:
           - os: ubuntu-24.04
             targetos: linux
             targetarch: loong64
-            cross: true
 #           - os: ubuntu-22.04
 #             targetos: linux
 #             targetarch: i386
@@ -83,12 +82,18 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Setup QEMU
+      uses: docker/setup-qemu-action@v3
+        
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
     - uses: addnab/docker-run-action@v3
       name: Build engine (docker)
       with:
-        registry: docker.io
-        image: debian:trixie
-        options: -v ${{ github.workspace }}:/work --privileged -e GH_CPU_ARCH=${{ env.GH_CPU_ARCH }} -e GH_CROSSCOMPILING=${{ env.GH_CROSSCOMPILING }} -e SDL_VERSION=${{ env.SDL_VERSION }}
+        registry: ghcr.io
+        image: loong64/debian:trixie
+        options: --platform linux/loong64 -v ${{ github.workspace }}:/work --privileged -e GH_CPU_ARCH=${{ env.GH_CPU_ARCH }} -e GH_CROSSCOMPILING=${{ env.GH_CROSSCOMPILING }} -e SDL_VERSION=${{ env.SDL_VERSION }}
         run: |
           cd /work
           apt update
