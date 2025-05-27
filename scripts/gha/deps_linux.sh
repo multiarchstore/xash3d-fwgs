@@ -21,6 +21,15 @@ BASE_BUILD_PACKAGES[arm64]="crossbuild-essential-arm64"
 BASE_BUILD_PACKAGES[armhf]="crossbuild-essential-armhf"
 BASE_BUILD_PACKAGES[riscv64]="crossbuild-essential-riscv64"
 BASE_BUILD_PACKAGES[ppc64el]="crossbuild-essential-ppc64el"
+BASE_BUILD_PACKAGES[loong64]="" # We do not have this now! We can only manually install it
+
+
+get_latest_release() {
+  curl --silent "https://api.github.com/repos/$1/releases/latest" | # Get latest release from GitHub api
+    grep '"tag_name":' |                                            # Get tag line
+    sed -E 's/.*"([^"]+)".*/\1/'                                    # Pluck JSON value
+}
+LOONG64_BUILD_TOOLCHAIN="https://github.com/loong64/cross-tools/releases/$(get_latest_release "loong64/cross-tools")/x86_64-cross-tools-loongarch64-unknown-linux-gnu-stable.tar.xz"
 
 SDL_BUILD_PACKAGES[common]="cmake ninja-build"
 # TODO: add libpipewire-0.3-dev and libdecor-0-dev after we migrate from 20.04
@@ -37,6 +46,7 @@ SDL_BUILD_PACKAGES[arm64]=${SDL_BUILD_PACKAGES[amd64]//-dev/-dev:arm64}
 SDL_BUILD_PACKAGES[armhf]=${SDL_BUILD_PACKAGES[amd64]//-dev/-dev:armhf}
 SDL_BUILD_PACKAGES[riscv64]=${SDL_BUILD_PACKAGES[amd64]//-dev/-dev:riscv64}
 SDL_BUILD_PACKAGES[ppc64el]=${SDL_BUILD_PACKAGES[amd64]//-dev/-dev:ppc64el}
+SDL_BUILD_PACKAGES[loong64]=${SDL_BUILD_PACKAGES[amd64]//-dev/-dev:loong64}
 
 APPIMAGETOOL[amd64]=https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
 APPIMAGETOOL[i386]=https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-i686.AppImage
@@ -52,6 +62,7 @@ RUST_TARGET[arm64]=aarch64-unknown-linux-gnu
 RUST_TARGET[armhf]=thumbv7neon-unknown-linux-gnueabihf
 RUST_TARGET[riscv64]=riscv64gc-unknown-linux-gnu
 RUST_TARGET[ppc64el]=powerpc64le-unknown-linux-gnu
+RUST_TARGET[loong64]=loongarch64-unknown-linux-gnu
 
 regenerate_sources_list()
 {
@@ -84,6 +95,14 @@ if [ -n "${APPIMAGETOOL[$GH_CPU_ARCH]}" ]; then
 	wget -O appimagetool.AppImage "${APPIMAGETOOL[$GH_CPU_ARCH]}"
 	chmod +x appimagetool.AppImage
 fi
+
+if [ "$GH_CPU_ARCH" = "loong64" ]; then
+	wget -O loong64-build-toolchain.tar.xz "$LOONG64_BUILD_TOOLCHAIN"
+	tar -xf loong64-build-toolchain.tar.xz -C /tmp
+	export PATH="/tmp/loongarch64-unknown-linux-gnu/bin:$PATH"
+fi
+
+SDL_VERSION=$(get_latest_release "libsdl-org/SDL")
 
 wget "https://github.com/libsdl-org/SDL/releases/download/release-$SDL_VERSION/SDL2-$SDL_VERSION.tar.gz" -qO- | tar -xzf -
 mv "SDL2-$SDL_VERSION" SDL2_src
