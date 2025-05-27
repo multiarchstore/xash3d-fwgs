@@ -70,18 +70,20 @@ regenerate_sources_list()
 	sudo rm /etc/apt/sources.list
 	sudo rm -rf /etc/apt/sources.list.d
 
-	codename=$(grep DISTRIB_CODENAME /etc/lsb-release | cut -d= -f2)
+	codename="trixie"
 
 	for i in "$codename" "$codename-updates" "$codename-backports" "$codename-security"; do
-		echo "deb [arch=$GH_CPU_ARCH] http://azure.ports.ubuntu.com/ubuntu-ports $i main universe" | sudo tee -a /etc/apt/sources.list
-		echo "deb [arch=amd64] http://azure.archive.ubuntu.com/ubuntu $i main universe" | sudo tee -a /etc/apt/sources.list
+		echo "deb [trusted=yes arch=amd64] http://ftp.debian.org/debian $i main contrib non-free non-free-firmware" | sudo tee -a /etc/apt/sources.list
 	done
+
+	echo "deb [trusted=yes arch=$GH_CPU_ARCH] http://deb.debian.org/debian-ports unreleased main" | sudo tee -a /etc/apt/sources.list
+	echo "deb [trusted=yes arch=$GH_CPU_ARCH] http://deb.debian.org/debian-ports unstable main" | sudo tee -a /etc/apt/sources.list
+
 }
 
 if [ "$GH_CPU_ARCH" != "amd64" ] && [ -n "$GH_CPU_ARCH" ]; then
 	if [ "$GH_CPU_ARCH" != "i386" ]; then
-		# regenerate_sources_list
-		echo "No need now"
+		regenerate_sources_list
 	fi
 	sudo dpkg --add-architecture "$GH_CPU_ARCH"
 fi
