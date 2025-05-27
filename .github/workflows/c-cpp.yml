@@ -90,6 +90,8 @@ jobs:
         options: -v ${{ github.workspace }}:/work --privileged -e GH_CPU_ARCH=${{ env.GH_CPU_ARCH }} -e GH_CROSSCOMPILING=${{ env.GH_CROSSCOMPILING }} -e SDL_VERSION=${{ env.SDL_VERSION }}
         run: |
           cd /work
+          sudo apt update
+          sudo apt install -y git curl sudo build-essential perl wget
           git config --global --add safe.directory /work
           echo "Running Script"
           bash scripts/gha/deps_${{ matrix.targetos }}.sh
