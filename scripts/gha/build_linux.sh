@@ -28,6 +28,9 @@ done
 export PKG_CONFIG_PATH=${ARCH_TRIPLET[$GH_CPU_ARCH]}
 export CC=${CROSS_COMPILE_CC[$GH_CPU_ARCH]}
 export CXX=${CROSS_COMPILE_CXX[$GH_CPU_ARCH]}
+if [ "$GH_CPU_ARCH" = "loong64" ]; then
+	export PATH="/tmp/loongarch64-unknown-linux-gnu/bin:$PATH"
+fi
 
 APP=xash3d-fwgs
 APPDIR=$APP.AppDir
