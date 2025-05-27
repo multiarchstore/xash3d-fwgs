@@ -90,6 +90,7 @@ fi
 
 sudo apt-mark hold base-files
 sudo apt update || die
+sudo apt -y install qemu-user
 # sudo apt install aptitude || die # aptitude is just more reliable at resolving dependencies
 
 # shellcheck disable=SC2086 # splitting is intended here
