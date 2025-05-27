@@ -97,6 +97,7 @@ jobs:
           cd /work
           apt update
           apt install -y git curl sudo build-essential perl wget rustup
+          rustup default stable
           git config --global --add safe.directory /work
           echo "Running Script"
           export BUILDDIR=/work
