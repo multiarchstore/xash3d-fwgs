@@ -62,7 +62,7 @@ build_engine()
 	# Build engine
 	cd "$BUILDDIR" || die
 
-	if [ "$ARCH" = "amd64" ]; then # we need enabling 64-bit target only on Intel-compatible CPUs
+	if [ "$ARCH" = "amd64" ] || [ "$ARCH" = "loong64" ]; then # we need enabling 64-bit target only on Intel-compatible CPUs
 		AMD64="-8"
 	fi
 
