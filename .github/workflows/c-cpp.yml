@@ -96,9 +96,10 @@ jobs:
         run: |
           cd /work
           apt update
-          apt install -y git curl sudo build-essential perl wget
+          apt install -y git curl sudo build-essential perl wget rustup
           git config --global --add safe.directory /work
           echo "Running Script"
+          export BUILDDIR=/work
           bash scripts/gha/deps_${{ matrix.targetos }}.sh
           bash scripts/gha/build_${{ matrix.targetos }}.sh
         
