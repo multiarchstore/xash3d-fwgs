@@ -88,6 +88,7 @@ if [ "$GH_CPU_ARCH" != "amd64" ] && [ -n "$GH_CPU_ARCH" ]; then
 	sudo dpkg --add-architecture "$GH_CPU_ARCH"
 fi
 
+sudo apt-mark hold base-files
 sudo apt update || die
 sudo apt install aptitude || die # aptitude is just more reliable at resolving dependencies
 
