@@ -91,8 +91,7 @@ jobs:
     - uses: addnab/docker-run-action@v3
       name: Build engine (docker)
       with:
-        registry: ghcr.io
-        image: loong64/debian:trixie
+        image: ghcr.io/loong64/debian:trixie
         options: --platform linux/loong64 -v ${{ github.workspace }}:/work --privileged -e GH_CPU_ARCH=${{ env.GH_CPU_ARCH }} -e GH_CROSSCOMPILING=${{ env.GH_CROSSCOMPILING }} -e SDL_VERSION=${{ env.SDL_VERSION }}
         run: |
           cd /work
