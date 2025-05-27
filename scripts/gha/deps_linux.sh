@@ -72,10 +72,10 @@ regenerate_sources_list()
 
 	codename="trixie"
 
-	for i in "$codename" "$codename-updates" "$codename-backports" "$codename-security"; do
+	for i in "$codename" "$codename-updates" "$codename-backports"; do
 		echo "deb [trusted=yes arch=amd64] http://ftp.debian.org/debian $i main contrib non-free non-free-firmware" | sudo tee -a /etc/apt/sources.list
 	done
-
+	echo "deb [trusted=yes arch=amd64] https://security.debian.org/debian-security $codename-security main contrib non-free non-free-firmware" | sudo tee -a /etc/apt/sources.list
 	echo "deb [trusted=yes arch=$GH_CPU_ARCH] http://deb.debian.org/debian-ports unreleased main" | sudo tee -a /etc/apt/sources.list
 	echo "deb [trusted=yes arch=$GH_CPU_ARCH] http://deb.debian.org/debian-ports unstable main" | sudo tee -a /etc/apt/sources.list
 
