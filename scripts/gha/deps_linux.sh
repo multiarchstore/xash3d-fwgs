@@ -21,7 +21,7 @@ BASE_BUILD_PACKAGES[arm64]="crossbuild-essential-arm64"
 BASE_BUILD_PACKAGES[armhf]="crossbuild-essential-armhf"
 BASE_BUILD_PACKAGES[riscv64]="crossbuild-essential-riscv64"
 BASE_BUILD_PACKAGES[ppc64el]="crossbuild-essential-ppc64el"
-BASE_BUILD_PACKAGES[loong64]="" # We do not have this now! We can only manually install it
+BASE_BUILD_PACKAGES[loong64]="build-essential" # We do not have this crossbuild-essential-loongarch64 now! We can only build in a native environment
 
 
 get_latest_release() {
@@ -73,9 +73,9 @@ regenerate_sources_list()
 	codename="trixie"
 
 	for i in "$codename" "$codename-updates" "$codename-backports"; do
-		echo "deb [trusted=yes arch=amd64] http://ftp.debian.org/debian $i main contrib non-free non-free-firmware" | sudo tee -a /etc/apt/sources.list
+		echo "deb [trusted=yes arch=$(dpkg --print-architecture)] http://ftp.debian.org/debian $i main contrib non-free non-free-firmware" | sudo tee -a /etc/apt/sources.list
 	done
-	echo "deb [trusted=yes arch=amd64] https://security.debian.org/debian-security $codename-security main contrib non-free non-free-firmware" | sudo tee -a /etc/apt/sources.list
+	echo "deb [trusted=yes arch=$(dpkg --print-architecture)] https://security.debian.org/debian-security $codename-security main contrib non-free non-free-firmware" | sudo tee -a /etc/apt/sources.list
 	echo "deb [trusted=yes arch=$GH_CPU_ARCH] http://deb.debian.org/debian-ports unreleased main" | sudo tee -a /etc/apt/sources.list
 	echo "deb [trusted=yes arch=$GH_CPU_ARCH] http://deb.debian.org/debian-ports unstable main" | sudo tee -a /etc/apt/sources.list
 
@@ -83,26 +83,22 @@ regenerate_sources_list()
 
 if [ "$GH_CPU_ARCH" != "amd64" ] && [ -n "$GH_CPU_ARCH" ]; then
 	if [ "$GH_CPU_ARCH" != "i386" ]; then
-		regenerate_sources_list
+		if [ $(dpkg --print-architecture) != "$GH_CPU_ARCH" ]; then
+			regenerate_sources_list
+		fi
 	fi
 	sudo dpkg --add-architecture "$GH_CPU_ARCH"
 fi
 
-sudo apt-mark hold base-files
 sudo apt update || die
-sudo apt -y install qemu-user
-# sudo apt install aptitude || die # aptitude is just more reliable at resolving dependencies
+sudo apt install aptitude || die # aptitude is just more reliable at resolving dependencies
 
 # shellcheck disable=SC2086 # splitting is intended here
-sudo apt install -y ${BASE_BUILD_PACKAGES[common]} ${BASE_BUILD_PACKAGES[$GH_CPU_ARCH]} ${SDL_BUILD_PACKAGES[common]} ${SDL_BUILD_PACKAGES[$GH_CPU_ARCH]} || die
+sudo aptitude install -y ${BASE_BUILD_PACKAGES[common]} ${BASE_BUILD_PACKAGES[$GH_CPU_ARCH]} ${SDL_BUILD_PACKAGES[common]} ${SDL_BUILD_PACKAGES[$GH_CPU_ARCH]} || die
 
 if [ -n "${APPIMAGETOOL[$GH_CPU_ARCH]}" ]; then
 	wget -O appimagetool.AppImage "${APPIMAGETOOL[$GH_CPU_ARCH]}"
 	chmod +x appimagetool.AppImage
-fi
-
-if [ "$GH_CPU_ARCH" = "loong64" ]; then
-	wget "$LOONG64_BUILD_TOOLCHAIN" -qO- | tar -xf - -C /tmp
 fi
 
 wget "https://github.com/libsdl-org/SDL/releases/download/release-$SDL_VERSION/SDL2-$SDL_VERSION.tar.gz" -qO- | tar -xzf -
