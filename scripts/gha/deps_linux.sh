@@ -101,13 +101,8 @@ if [ -n "${APPIMAGETOOL[$GH_CPU_ARCH]}" ]; then
 fi
 
 if [ "$GH_CPU_ARCH" = "loong64" ]; then
-	wget -O loong64-build-toolchain.tar.xz "$LOONG64_BUILD_TOOLCHAIN"
-	tar -xf loong64-build-toolchain.tar.xz -C /tmp
-	export PATH="/tmp/loongarch64-unknown-linux-gnu/bin:$PATH"
-	rm loong64-build-toolchain.tar.xz
+	wget "$LOONG64_BUILD_TOOLCHAIN" -qO- | tar -xzf - -C /tmp
 fi
-
-SDL_VERSION=$(get_latest_release "libsdl-org/SDL")
 
 wget "https://github.com/libsdl-org/SDL/releases/download/release-$SDL_VERSION/SDL2-$SDL_VERSION.tar.gz" -qO- | tar -xzf -
 mv "SDL2-$SDL_VERSION" SDL2_src
