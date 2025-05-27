@@ -101,7 +101,7 @@ if [ -n "${APPIMAGETOOL[$GH_CPU_ARCH]}" ]; then
 fi
 
 if [ "$GH_CPU_ARCH" = "loong64" ]; then
-	wget "$LOONG64_BUILD_TOOLCHAIN" -qO- | tar -xzf - -C /tmp
+	wget "$LOONG64_BUILD_TOOLCHAIN" -qO- | tar -xf - -C /tmp
 fi
 
 wget "https://github.com/libsdl-org/SDL/releases/download/release-$SDL_VERSION/SDL2-$SDL_VERSION.tar.gz" -qO- | tar -xzf -
