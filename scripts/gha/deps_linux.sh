@@ -29,7 +29,7 @@ get_latest_release() {
     grep '"tag_name":' |                                            # Get tag line
     sed -E 's/.*"([^"]+)".*/\1/'                                    # Pluck JSON value
 }
-LOONG64_BUILD_TOOLCHAIN="https://github.com/loong64/cross-tools/releases/$(get_latest_release "loong64/cross-tools")/x86_64-cross-tools-loongarch64-unknown-linux-gnu-stable.tar.xz"
+LOONG64_BUILD_TOOLCHAIN="https://github.com/loong64/cross-tools/releases/download/$(get_latest_release "loong64/cross-tools")/x86_64-cross-tools-loongarch64-unknown-linux-gnu-stable.tar.xz"
 
 SDL_BUILD_PACKAGES[common]="cmake ninja-build"
 # TODO: add libpipewire-0.3-dev and libdecor-0-dev after we migrate from 20.04
@@ -104,6 +104,7 @@ if [ "$GH_CPU_ARCH" = "loong64" ]; then
 	wget -O loong64-build-toolchain.tar.xz "$LOONG64_BUILD_TOOLCHAIN"
 	tar -xf loong64-build-toolchain.tar.xz -C /tmp
 	export PATH="/tmp/loongarch64-unknown-linux-gnu/bin:$PATH"
+	rm loong64-build-toolchain.tar.xz
 fi
 
 SDL_VERSION=$(get_latest_release "libsdl-org/SDL")
