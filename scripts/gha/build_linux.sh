@@ -16,12 +16,13 @@ ARCH_TRIPLET[arm64]=aarch64-linux-gnu
 ARCH_TRIPLET[armhf]=arm-linux-gnueabihf
 ARCH_TRIPLET[riscv64]=riscv64-linux-gnu
 ARCH_TRIPLET[ppc64el]=powerpc64le-linux-gnu
-ARCH_TRIPLET[loong64]=loongarch64-unknown-linux-gnu
 CROSS_COMPILE_CC[amd64]=cc
 CROSS_COMPILE_CC[i386]="cc -m32"
+CROSS_COMPILE_CC[loong64]="cc"
 CROSS_COMPILE_CXX[amd64]=c++
 CROSS_COMPILE_CXX[i386]="c++ -m32"
-for i in arm64 armhf riscv64 ppc64el loong64; do
+CROSS_COMPILE_CXX[loong64]="c++"
+for i in arm64 armhf riscv64 ppc64el; do
 	CROSS_COMPILE_CC[$i]=${ARCH_TRIPLET[$i]}-gcc
 	CROSS_COMPILE_CXX[$i]=${ARCH_TRIPLET[$i]}-g++
 done
