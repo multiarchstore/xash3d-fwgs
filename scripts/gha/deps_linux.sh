@@ -90,7 +90,6 @@ fi
 
 sudo apt-mark hold base-files
 sudo apt update || die
-sudo apt install -y libc-bin:$GH_CPU_ARCH || die
 # sudo apt install aptitude || die # aptitude is just more reliable at resolving dependencies
 
 # shellcheck disable=SC2086 # splitting is intended here
